@@ -3,7 +3,6 @@ import viteLogo from './assets/vite.svg'
 import './App.css'
 
 function App() {
-  const [count,setCount] = useState()
 
   return (
     <>
