@@ -1,0 +1,37 @@
+name: React App Automated EC2 CI/CD Deployment
+
+on:
+  push:
+    branches:
+      - main  # Trigger automation whenever code is pushed to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy and Build Live inside AWS EC2 Instance
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Navigate to your project folder on the server
+            cd ~/react-app
+            
+            # Clear out any accidental uncommitted files and pull the latest changes
+            git reset --hard
+            git pull origin main
+            
+            # Install all fresh production node modules cleanly
+            npm install
+            
+            # Recompile your Vite project (generates the updated /dist directory)
+            npm run build
+            
+            # Restart Nginx to verify and apply structural changes safely
+            sudo systemctl restart nginx
