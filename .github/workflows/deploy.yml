@@ -1,9 +1,9 @@
-name: React App Automated EC2 CI/CD Deployment
+name: React App Dockerized Automated EC2 CI/CD Deployment
 
 on:
   push:
     branches:
-      - main  # Trigger automation whenever code is pushed to the main branch
+      - main
 
 jobs:
   deploy:
@@ -13,25 +13,25 @@ jobs:
       - name: Checkout Source Code Repository
         uses: actions/checkout@v4
 
-      - name: Deploy and Build Live inside AWS EC2 Instance
+      - name: Deploy and Launch Docker Container inside AWS EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Navigate to your project folder on the server
             cd ~/react-app
             
-            # Clear out any accidental uncommitted files and pull the latest changes
+            # Pull the latest source code additions
             git reset --hard
             git pull origin main
             
-            # Install all fresh production node modules cleanly
-            npm install
+            # Build the new Docker Image using the container blueprint
+            docker build -t react-web-app:latest .
             
-            # Recompile your Vite project (generates the updated /dist directory)
-            npm run build
+            # Safely shut down and remove the old running container version if it exists
+            docker stop react-container || true
+            docker rm react-container || true
             
-            # Restart Nginx to verify and apply structural changes safely
-            sudo systemctl restart nginx
+            # Run the fresh container, mapping port 80 of the server to port 80 of the container
+            docker run -d --name react-container -p 80:80 react-web-app:latest
