@@ -7,6 +7,9 @@ function App() {
   return (
     <>
     <h1>hello from aws</h1>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil, a tempore in aliquid ad ab unde ullam repellendus delectus fugiat fugit ut illum totam nam distinctio deserunt neque doloribus magnam!
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Enim alias assumenda, aut repellendus voluptatem accusantium beatae dicta molestias reiciendis? Explicabo error iure dicta molestiae earum excepturi facere neque quasi numquam.
+    </p>
     
 
       <div className="ticks"></div>
